@@ -1,5 +1,6 @@
 package uz.tech4ecobackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
@@ -59,4 +60,16 @@ public class Node implements Serializable {
         DeviceType = deviceType;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "field_id", referencedColumnName = "id")
+    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
+    private Field field;
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
 }

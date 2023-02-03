@@ -34,10 +34,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/register").permitAll()
                 .antMatchers("api/parameter/register").permitAll()
                 .antMatchers("/api/node/**").permitAll()
+                .antMatchers("/api/role/**").permitAll()
 
                 .antMatchers("/api/user").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/api/account").hasAnyRole("USER", "ADMIN")  // Bazaga ROLE_ADMIN deb saqlash kerak
-                .antMatchers("/api/getLogin", "/api/role/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/getLogin", "/api/role/delete").hasAnyRole("USER", "ADMIN")
 
                 .and()
                 .httpBasic()
