@@ -12,6 +12,7 @@ public class Field implements Serializable {
     private Long Id;
     @NotNull
     private String name;
+    private int settedMoistureLevel;
 
     public Long getId() {
         return Id;
@@ -27,5 +28,13 @@ public class Field implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getSettedMoistureLevel() {
+        return settedMoistureLevel;
+    }
+
+    public void setSettedMoistureLevel(int settedMoistureLevel) {
+        this.settedMoistureLevel = settedMoistureLevel;
     }
 }

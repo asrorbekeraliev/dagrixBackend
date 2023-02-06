@@ -5,4 +5,5 @@ import uz.tech4ecobackend.entity.Field;
 
 public interface FieldRepository extends JpaRepository<Field, Long> {
     public void deleteById(Long Id);
+    public Field findByName(String name);
 }

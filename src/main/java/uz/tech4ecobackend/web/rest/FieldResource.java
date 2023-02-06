@@ -1,10 +1,7 @@
 package uz.tech4ecobackend.web.rest;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.tech4ecobackend.entity.Field;
 import uz.tech4ecobackend.service.FieldService;
 
@@ -20,5 +17,10 @@ public class FieldResource {
     @PostMapping("/field")
     public ResponseEntity create(@RequestBody Field field){
         return ResponseEntity.ok(fieldService.create(field));
+    }
+
+    @GetMapping("/field")
+    public ResponseEntity getAll(){
+        return ResponseEntity.ok(fieldService.allFields());
     }
 }
