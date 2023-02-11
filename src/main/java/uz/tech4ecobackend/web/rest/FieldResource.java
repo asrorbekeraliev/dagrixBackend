@@ -23,4 +23,10 @@ public class FieldResource {
     public ResponseEntity getAll(){
         return ResponseEntity.ok(fieldService.allFields());
     }
+
+    @DeleteMapping("/field/{id}")
+    public ResponseEntity delete(@PathVariable Long id){
+        int numberOfDevices = fieldService.deleteField(id);
+        return ResponseEntity.ok(numberOfDevices);
+    }
 }

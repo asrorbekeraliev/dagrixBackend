@@ -2,9 +2,9 @@ package uz.tech4ecobackend.web.rest;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import uz.tech4ecobackend.entity.dto.UserDTO;
 import uz.tech4ecobackend.security.JwtTokenProvider;
+import uz.tech4ecobackend.service.FieldService;
 import uz.tech4ecobackend.service.NodeService;
 import uz.tech4ecobackend.service.UserService;
 import uz.tech4ecobackend.web.rest.loginVM.LoginVM;
@@ -32,11 +32,14 @@ public class UserJwtController {
     private final UserService userService;
     private final NodeService nodeService;
 
-    public UserJwtController(JwtTokenProvider jwtTokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService, NodeService nodeService) {
+    private final FieldService fieldService;
+
+    public UserJwtController(JwtTokenProvider jwtTokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService, NodeService nodeService, FieldService fieldService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userService = userService;
         this.nodeService = nodeService;
+        this.fieldService = fieldService;
     }
 
     @PostMapping("/authenticate")
@@ -62,6 +65,8 @@ public class UserJwtController {
             body.put("login", user.getLogin());
             body.put("users", String.valueOf(numberOfUsers));
             body.put("devices", String.valueOf(numberOfDevices));
+            body.put("fields", String.valueOf(fieldService.numberOfFields()));
+            body.put("loggedIn", String.valueOf(true));
             log.info("User successfully signed in");
             return new ResponseEntity(body, headers, HttpStatus.OK);
         } catch (Exception exception) {
@@ -72,6 +77,15 @@ public class UserJwtController {
         }
 
 
+    }
+
+    @GetMapping("/getUDF") // UDF -> Users Devices Fields
+    public ResponseEntity getUDF(){
+        Map<String, String> UDF = new HashMap<>();
+        UDF.put("fields", String.valueOf(fieldService.numberOfFields()));
+        UDF.put("users", String.valueOf(userService.numberOfUsers()));
+        UDF.put("devices", String.valueOf(nodeService.findAllNodeIDs().size()));
+        return ResponseEntity.ok(UDF);
     }
 
 }
