@@ -26,6 +26,11 @@ public class UserResource {
         return ResponseEntity.ok(userService.save(user));
     }
 
+    @PutMapping("/update")
+    public ResponseEntity update(@RequestBody User user){
+        return ResponseEntity.ok(userService.update(user));
+    }
+
 
 
     @GetMapping("/account")

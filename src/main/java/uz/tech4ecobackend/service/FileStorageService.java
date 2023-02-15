@@ -27,41 +27,49 @@ public class FileStorageService {
     // save method
 
     public FileStorage save(MultipartFile multipartFile){
-        FileStorage fileStorage = new FileStorage();
-        fileStorage.setName(multipartFile.getName());
-        fileStorage.setFileSize(multipartFile.getSize());
-        fileStorage.setContentType(multipartFile.getContentType());
-        fileStorage.setExtension(getExtension(multipartFile.getOriginalFilename()));
-        fileStorage.setLogin(SecurityUtils.getCurrentUserName().get());
-        fileStorage =fileStorageRepository.save(fileStorage);
 
-        Date now = new Date();
+        if (fileStorageRepository.findByLogin(SecurityUtils.getCurrentUserName().get()) == null){
+            FileStorage fileStorage = new FileStorage();
+            fileStorage.setName(multipartFile.getName());
+            fileStorage.setFileSize(multipartFile.getSize());
+            fileStorage.setContentType(multipartFile.getContentType());
+            fileStorage.setExtension(getExtension(multipartFile.getOriginalFilename()));
+            fileStorage.setLogin(SecurityUtils.getCurrentUserName().get());
+            fileStorage =fileStorageRepository.save(fileStorage);
 
-        String path = String.format("%s/upload_files/%d/%d/%d/",
-                this.serverFolderPath, 1900+now.getYear(), 1+now.getMonth(), now.getDate());
-        File uploadFolder = new File(path);
-        if (!uploadFolder.exists() && uploadFolder.mkdirs()){
-            System.out.println("Folder created");
+            Date now = new Date();
+
+            String path = String.format("%s/upload_files/%d/%d/%d/",
+                    this.serverFolderPath, 1900+now.getYear(), 1+now.getMonth(), now.getDate());
+            File uploadFolder = new File(path);
+            if (!uploadFolder.exists() && uploadFolder.mkdirs()){
+                System.out.println("Folder created");
+            }
+
+            fileStorage.setHashId(hashids.encode(fileStorage.getId())); // fileStorage ning id sidan hashId yasayabdi
+
+            String pathLocal = String.format("/upload_files/%d/%d/%d/%s.%s",
+                    1900+now.getYear(), 1+now.getMonth(), now.getDate(), fileStorage.getHashId(), fileStorage.getExtension());
+
+            fileStorage.setUploadFolder(pathLocal);
+            fileStorageRepository.save(fileStorage);
+            uploadFolder = uploadFolder.getAbsoluteFile();
+
+            File file = new File(uploadFolder, String.format("%s.%s", fileStorage.getHashId(), fileStorage.getExtension()));
+
+            try{
+                multipartFile.transferTo(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return fileStorage;
+        }
+        else {
+            return null;
         }
 
-        fileStorage.setHashId(hashids.encode(fileStorage.getId())); // fileStorage ning id sidan hashId yasayabdi
 
-        String pathLocal = String.format("/upload_files/%d/%d/%d/%s.%s",
-                1900+now.getYear(), 1+now.getMonth(), now.getDate(), fileStorage.getHashId(), fileStorage.getExtension());
-
-        fileStorage.setUploadFolder(pathLocal);
-        fileStorageRepository.save(fileStorage);
-        uploadFolder = uploadFolder.getAbsoluteFile();
-
-        File file = new File(uploadFolder, String.format("%s.%s", fileStorage.getHashId(), fileStorage.getExtension()));
-
-        try{
-            multipartFile.transferTo(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileStorage;
     }
 
     private String getExtension(String fileName){
@@ -81,15 +89,25 @@ public class FileStorageService {
     }
 
     public String findHashIdByLogin(){
-        return fileStorageRepository.findByLogin(SecurityUtils.getCurrentUserName().get()).getHashId();
+        FileStorage fileStorage = fileStorageRepository.findByLogin(SecurityUtils.getCurrentUserName().get());
+        if (fileStorage == null){
+            return null;
+        }
+        return fileStorage.getHashId();
     }
 
-    public void delete(String hashId){
+    public String delete(String hashId){
         FileStorage fileStorage = fileStorageRepository.findByHashId(hashId);
         File file = new File(String.format("%s/%s", this.serverFolderPath, fileStorage.getUploadFolder()));
-        if (file.delete()){
-            fileStorageRepository.delete(fileStorage);
+        try {
+            file.delete();
+            return "Successfully deleted";
+        } catch (Exception e){
+            return e.toString();
         }
+//        if (file.delete()){
+//            fileStorageRepository.delete(fileStorage);
+//        }
     }
 
 

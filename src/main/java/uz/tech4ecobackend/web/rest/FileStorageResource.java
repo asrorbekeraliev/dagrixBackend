@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/file")
 public class FileStorageResource {
     @Value("${upload.server.folder}")
     private String serverFolderPath;
@@ -63,7 +63,6 @@ public class FileStorageResource {
 
     @DeleteMapping("/delete/{hashId}")
     public ResponseEntity delete(@PathVariable String hashId){
-        fileStorageService.delete(hashId);
-        return ResponseEntity.ok("fayl o'chirildi!");
+        return ResponseEntity.ok(fileStorageService.delete(hashId));
     }
 }

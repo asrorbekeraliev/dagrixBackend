@@ -6,6 +6,7 @@ import uz.tech4ecobackend.entity.dto.UserDTO;
 import uz.tech4ecobackend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uz.tech4ecobackend.security.SecurityUtils;
 
 import java.util.List;
 
@@ -22,6 +23,16 @@ public class UserService {
 
     public User save (User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public User update(User newUser){
+        User user = userRepository.findByLogin(SecurityUtils.getCurrentUserName().get());
+        user.setName(newUser.getName());
+        user.setLastName(newUser.getLastName());
+        user.setEmail(newUser.getEmail());
+        user.setLogin(newUser.getLogin());
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         return userRepository.save(user);
     }
 
