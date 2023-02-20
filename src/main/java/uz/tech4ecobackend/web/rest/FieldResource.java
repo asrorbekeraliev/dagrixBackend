@@ -23,6 +23,11 @@ public class FieldResource {
     public ResponseEntity getAll(){
         return ResponseEntity.ok(fieldService.allFields());
     }
+    
+    @GetMapping("/fieldnames")
+    public ResponseEntity getAllFieldNames(){
+        return ResponseEntity.ok(fieldService.allFieldNames());
+    }
 
     @DeleteMapping("/field/{id}")
     public ResponseEntity delete(@PathVariable Long id){

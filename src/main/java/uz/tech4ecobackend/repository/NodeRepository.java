@@ -15,6 +15,9 @@ public interface NodeRepository extends JpaRepository<Node, Long> {
     void deleteById(Long Id);
     boolean existsNodeById(Long Id);
 
+    @Query(value = "SELECT * from qurilmalar q where q.field_id=?1", nativeQuery = true)
+    List<Node> findByField_Id(Long field_id);
+
     @Modifying
     @Query(value = "DELETE from qurilmalar q where q.field_id=?1", nativeQuery = true)
     void deleteAllByFieldId(Long field_id);

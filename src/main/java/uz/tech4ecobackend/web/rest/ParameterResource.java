@@ -49,6 +49,11 @@ public class ParameterResource {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/avaragesm")
+    public ResponseEntity getAvarageSoilMoistureLevels(){
+        return ResponseEntity.ok(parameterService.getFieldSoilMoistureLevels());
+    }
+
 
 
     @GetMapping("/data/{nodeId}")

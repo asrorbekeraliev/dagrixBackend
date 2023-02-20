@@ -30,6 +30,14 @@ public class FieldService {
         return fields;
     }
 
+    public List<String> allFieldNames(){
+        List<String> names = new ArrayList<>();
+        for (int i=0; i<fieldRepository.findAll().size(); i++){
+            names.add(fieldRepository.findAll().get(i).getName());
+        }
+        return names;
+    }
+
     public int numberOfFields(){
         return fieldRepository.findAll().stream().toList().size();
     }

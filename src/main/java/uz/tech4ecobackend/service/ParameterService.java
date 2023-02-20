@@ -1,24 +1,28 @@
 package uz.tech4ecobackend.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import uz.tech4ecobackend.entity.Node;
 import uz.tech4ecobackend.entity.Parameter;
-import uz.tech4ecobackend.entity.dto.ParameterDTO;
+import uz.tech4ecobackend.repository.FieldRepository;
+import uz.tech4ecobackend.repository.NodeRepository;
 import uz.tech4ecobackend.repository.ParameterRepository;
 
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
+
+import static java.lang.Double.valueOf;
 
 @Service
 public class ParameterService {
     private final ParameterRepository parameterRepository;
+    private final NodeRepository nodeRepository;
+    private final FieldRepository fieldRepository;
 
-    public ParameterService(ParameterRepository parameterRepository) {
+    public ParameterService(ParameterRepository parameterRepository, NodeRepository nodeRepository, FieldRepository fieldRepository) {
         this.parameterRepository = parameterRepository;
+        this.nodeRepository = nodeRepository;
+        this.fieldRepository = fieldRepository;
     }
 
     public Parameter create(Parameter parameter){
@@ -87,6 +91,27 @@ public class ParameterService {
     @Transactional(readOnly = true)
     public void delete(Long id){
         parameterRepository.deleteById(id);
+    }
+
+    public List<Double> getFieldSoilMoistureLevels(){
+        List<Double> fieldMoistureLevels = new ArrayList<>();
+        for (int i=0; i<fieldRepository.findAll().size(); i++){
+            // Gathering nodeIds in the field
+            List<Long> nodeIds = new ArrayList<>();
+            for (int n=0; n<nodeRepository.findByField_Id(fieldRepository.findAll().get(i).getId()).size(); n++){
+                nodeIds.add(nodeRepository.findByField_Id(fieldRepository.findAll().get(i).getId()).get(n).getId());
+            }
+            // Soil Moisture Levels
+            double TotalMoistureLevel = 0.0;
+            int m;
+            for (m=0; m<nodeIds.size(); m++){
+                int lastIndex = parameterRepository.findSoilMoisturesByNodeId(nodeIds.get(m)).size()-1;
+                TotalMoistureLevel = TotalMoistureLevel + ((double) parameterRepository.findSoilMoisturesByNodeId(nodeIds.get(m)).get(lastIndex));
+            }
+            double avarageMoistureLevel = TotalMoistureLevel / (m);
+            fieldMoistureLevels.add(avarageMoistureLevel);
+        }
+        return fieldMoistureLevels;
     }
 
 }
