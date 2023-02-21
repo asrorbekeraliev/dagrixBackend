@@ -93,8 +93,8 @@ public class ParameterService {
         parameterRepository.deleteById(id);
     }
 
-    public List<Double> getFieldSoilMoistureLevels(){
-        List<Double> fieldMoistureLevels = new ArrayList<>();
+    public List<Integer> getFieldSoilMoistureLevels(){
+        List<Integer> fieldMoistureLevels = new ArrayList<>();
         for (int i=0; i<fieldRepository.findAll().size(); i++){
             // Gathering nodeIds in the field
             List<Long> nodeIds = new ArrayList<>();
@@ -103,13 +103,12 @@ public class ParameterService {
             }
             // Soil Moisture Levels
             double TotalMoistureLevel = 0.0;
-            int m;
-            for (m=0; m<nodeIds.size(); m++){
+            for (int m=0; m<nodeIds.size(); m++){
                 int lastIndex = parameterRepository.findSoilMoisturesByNodeId(nodeIds.get(m)).size()-1;
                 TotalMoistureLevel = TotalMoistureLevel + ((double) parameterRepository.findSoilMoisturesByNodeId(nodeIds.get(m)).get(lastIndex));
             }
-            double avarageMoistureLevel = TotalMoistureLevel / (m);
-            fieldMoistureLevels.add(avarageMoistureLevel);
+            Float avarageMoistureLevel = (float) TotalMoistureLevel / (nodeIds.size());
+            fieldMoistureLevels.add(Math.round(avarageMoistureLevel));
         }
         return fieldMoistureLevels;
     }
