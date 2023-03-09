@@ -40,9 +40,11 @@ public class ParameterService {
 
     @Transactional(readOnly = true)
     public List<?> findAllByNodeId(Long nodeId){
+        double son=2.5;
+        son = son + ((double) parameterRepository.findSoilMoisturesByNodeId(nodeId).get(0));
+        System.out.println(son);
 
         List<List<?>> parameters = new ArrayList<>();
-
         parameters.add(parameterRepository.findAirTemperaturesByNodeId(nodeId));
         parameters.add(parameterRepository.findHumiditiesByNodeId(nodeId));
         parameters.add(parameterRepository.findSoilTemperaturesByNodeId(nodeId));

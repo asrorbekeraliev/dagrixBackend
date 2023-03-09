@@ -4,11 +4,11 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dagrix
     username: dagrix
-    password: 123
+    password: cyIgsFHpJ9JQXAHSCEo0vhylorZVejLC
 
-#    url: jdbc:postgresql://localhost:5432/test
-#    username: test_user
-#    password: Test123.Test
+#    url: jdbc:postgresql://dpg-cg4kvcseoogtrlt2cv00-a.oregon-postgres.render.com:5432/dagrix
+#    username: dagrix
+#    password: 123
   jpa:
     properties:
       hibernate:
